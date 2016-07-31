@@ -20,6 +20,35 @@ public:
 
 class Solution {
 public:
+    int depthSumInverse(vector<NestedInteger>& nestedList) {
+        int res = 0;
+        vector<int> v;
+        for (auto a : nestedList) {
+            helper(a, 0, v);
+        }
+        for (int i = v.size() - 1; i >= 0; --i) {
+            res += v[i] * (v.size() - i);
+        }
+        return res;
+    } 
+
+
+    void help(NestedInteger& ni, int depth, vector<vector<int>> &v) {
+        if (depth >= v.size()) v.resize(depth + 1);
+        if (ni.isInteger()) {
+            v[depth] += ni.getInterger();
+        }
+        else {
+            for (auto a : ni.getList()) {
+                help(a, depth + 1, v);
+            }
+        }
+    }
+};
+
+
+class Solution {
+public:
     int depthSum(vector<NestedInteger>& nestedList) {
         return helper(nestedList, 1);
     }
@@ -58,6 +87,9 @@ public:
         }
     }
 };
+
+
+
 
 
 // use the method to accumulate the nested elements for multiple times

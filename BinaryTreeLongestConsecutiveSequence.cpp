@@ -1,3 +1,6 @@
+//http://www.cnblogs.com/grandyang/p/5252599.html
+
+
 public class Solution {
     public int longestConsecutive(TreeNode root) {
         return (root==null)?0:Math.max(dfs(root.left, 1, root.val), dfs(root.right, 1, root.val));
@@ -48,7 +51,38 @@ int longestConsecutive(TreeNode* root) {
 }
 
 
-/*** the path could include the path from root to leaf also could be leaf to root **/
+// iterative implementation 
+// we will seperately consider the node that violate the conditions we set
+class Solution {
+public:
+    int longestConsecutive(TreeNode* root) {
+        if (!root) return 0;
+        int res = 0;
+        queue<TreeNode*> q;
+        q.push(root);
+        while (!q.empty()) {
+            int len = 1;
+            TreeNode *t = q.front(); q.pop();
+            while ((t->left && t->left->val == t->val + 1) || (t->right && t->right->val == t->val + 1)) {
+                if (t->left && t->left->val == t->val + 1) {
+                    if (t->right) q.push(t->right);
+                    t = t->left;
+                } else if (t->right && t->right->val == t->val + 1) {
+                    if (t->left) q.push(t->left);
+                    t = t->right;
+                }
+                ++len;
+            }
+            if (t->left) q.push(t->left);
+            if (t->right) q.push(t->right);
+            res = max(res, len);
+        }
+        return res;
+    }
+};
+
+/*** 
+the path could include the path from root to leaf also could be leaf to root **/
 /**
 longest consective increasing sequence in binary tree.(start point happen anywhere in the node, not necessary start from root)
 
@@ -92,12 +126,14 @@ void dfs(TreeNode* root, int val, int& cnt, int& cnt_big, int& cnt_small, int pr
 
     int result = max(cnt_left, cnt_right, cnt_left_big + 1 + cnt_right_small, cnt_right_big + 1 + cnt_left_small);
 
+    //record the increasing path
     if(root->val == prev_val + 1) {
         cnt = result;
         cnt_big = max(cnt_left_big, cnt_right_big) + 1;
         cnt_small = 0;
         return;
     }
+    //record the decreasing path
     else if (root->val == prev_val - 1) {
         cnt = result;
         cnt_big = 0;
